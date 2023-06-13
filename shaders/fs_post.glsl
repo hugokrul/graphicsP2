@@ -15,6 +15,6 @@ void main()
 	outputColor = texture(pixels, uv).rgb;
 
 	// apply dummy postprocessing effect
-	float dist = length(positionFromBottomLeft);
-	outputColor *= sin(dist * 50.0) * 0.25 + 0.75;
+	//float dist = length(positionFromBottomLeft);
+	//outputColor *= sin(dist * 50.0) * 0.25 + 0.75;
 }
