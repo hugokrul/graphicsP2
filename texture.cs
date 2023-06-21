@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Template
+namespace INFOGR2023TemplateP2
 {
     public class Texture
     {

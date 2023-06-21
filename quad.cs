@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace Template
+namespace INFOGR2023TemplateP2
 {
     public class ScreenQuad
     {

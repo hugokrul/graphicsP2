@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using OpenTK.Mathematics;
 
-namespace Template
+namespace INFOGR2023TemplateP2
 {
     class MyApplication
     {
@@ -16,6 +16,7 @@ namespace Template
         RenderTarget? target;                   // intermediate render target
         ScreenQuad? quad;                       // screen filling quad for post processing
         readonly bool useRenderTarget = true;   // required for post processing
+        SceneGraphs world;
 
         // constructor
         public MyApplication(Surface screen)
@@ -75,8 +76,15 @@ namespace Template
                 // render scene to render target
                 if (shader != null && wood != null)
                 {
-                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
-                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
+                    //teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
+                    //floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
+
+                    world = new SceneGraphs();
+                    Node? teapotNode = new Node(teapotObjectToWorld, teapot);
+                    Node? floorNode = new Node(floorObjectToWorld, floor);
+                    world.children.Add(teapotNode);
+                    world.children.Add(floorNode);
+                    world.Render(shader, worldToCamera * cameraToScreen, Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), 1), wood);
                 }
 
                 // render quad

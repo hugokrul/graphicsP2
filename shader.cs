@@ -2,7 +2,7 @@
 using System.IO;
 using OpenTK.Graphics.OpenGL;
 
-namespace Template
+namespace INFOGR2023TemplateP2
 {
     public class Shader
     {
