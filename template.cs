@@ -134,7 +134,8 @@ namespace INFOGR2023TemplateP2
         {
             base.OnUpdateFrame(e);
             // called once per frame; app logic
-            var keyboard = KeyboardState;
+            KeyboardState keyboard = KeyboardState;
+            app.keyboard = keyboard;
             if (keyboard[Keys.Escape]) terminated = true;
         }
         protected override void OnRenderFrame(FrameEventArgs e)

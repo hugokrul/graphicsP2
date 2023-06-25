@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace INFOGR2023TemplateP2
 {
@@ -17,11 +18,19 @@ namespace INFOGR2023TemplateP2
         ScreenQuad? quad;                       // screen filling quad for post processing
         readonly bool useRenderTarget = true;   // required for post processing
         SceneGraphs world;
+        public KeyboardState keyboard;
+        Vector3 cameraPosition = new Vector3(0, 0, -10);
+        float viewAngle;
+        Matrix4 rotateVertical;
+        float speed = 0.3f;
+        
 
         // constructor
         public MyApplication(Surface screen)
         {
             this.screen = screen;
+            viewAngle = 0;
+            rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), 0);
         }
         // initialize
         public void Init()
@@ -47,6 +56,42 @@ namespace INFOGR2023TemplateP2
         {
             screen.Clear(0);
             screen.Print("hello world", 2, 2, 0xffff00);
+
+            if (keyboard.IsKeyDown(Keys.W))
+            {
+                cameraPosition.Z += speed;
+            }
+            if (keyboard.IsKeyDown(Keys.S))
+            {
+                cameraPosition.Z -= speed;
+            }
+            if (keyboard.IsKeyDown(Keys.D))
+            {
+                cameraPosition.X -= speed;
+            }
+            if (keyboard.IsKeyDown(Keys.A))
+            {
+                cameraPosition.X += speed;
+            }
+            if (keyboard.IsKeyDown(Keys.Space))
+            {
+                cameraPosition.Y -= speed;
+            }
+            if (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift))
+            {
+                cameraPosition.Y += speed;
+            }
+            if (keyboard.IsKeyDown(Keys.Left))
+            {
+                viewAngle -= speed * 0.1f;
+                rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), viewAngle);
+            }
+            if (keyboard.IsKeyDown(Keys.Right))
+            {
+                viewAngle += speed * 0.1f;
+                rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), viewAngle);
+            }
+
         }
 
         // tick for OpenGL rendering code
@@ -58,10 +103,11 @@ namespace INFOGR2023TemplateP2
             timer.Start();
 
             // prepare matrix for vertex shader
-            float angle90degrees = MathF.PI / 2;
-            Matrix4 teapotObjectToWorld = Matrix4.CreateScale(0.5f) * Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a);
-            Matrix4 floorObjectToWorld = Matrix4.CreateScale(4.0f) * Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a);
-            Matrix4 worldToCamera = Matrix4.CreateTranslation(new Vector3(0, -14.5f, 0)) * Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), angle90degrees);
+            float angle90degrees = 3;
+
+            Matrix4 teapotObjectToWorld = Matrix4.CreateScale(0.5f);
+            Matrix4 floorObjectToWorld = Matrix4.CreateScale(4.0f);
+            Matrix4 worldToCamera = Matrix4.CreateTranslation(cameraPosition) * rotateVertical;
             Matrix4 cameraToScreen = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60.0f), (float)screen.width/screen.height, .1f, 1000);
 
             // update rotation
@@ -76,15 +122,15 @@ namespace INFOGR2023TemplateP2
                 // render scene to render target
                 if (shader != null && wood != null)
                 {
-                    //teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
-                    //floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
+                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
+                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
 
-                    world = new SceneGraphs();
-                    Node? teapotNode = new Node(teapotObjectToWorld, teapot);
-                    Node? floorNode = new Node(floorObjectToWorld, floor);
-                    world.children.Add(teapotNode);
-                    world.children.Add(floorNode);
-                    world.Render(shader, worldToCamera * cameraToScreen, Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), 1), wood);
+                    // world = new SceneGraphs();
+                    // Node? teapotNode = new Node(teapotObjectToWorld, teapot);
+                    // Node? floorNode = new Node(floorObjectToWorld, floor);
+                    // world.children.Add(teapotNode);
+                    // world.children.Add(floorNode);
+                    // world.Render(shader, worldToCamera * cameraToScreen, Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), 1), wood);
                 }
 
                 // render quad
