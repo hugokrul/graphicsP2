@@ -78,6 +78,7 @@ namespace INFOGR2023TemplateP2
             GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.ambient"), new Vector3(0.25f));
             GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.diffuse"), new Vector3(0.5f));
             GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.specular"), new Vector3(1.0f));
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "material.shininess"), new Vector3(30f));
 
             // pass transforms to vertex shader
             GL.UniformMatrix4(shader.uniform_objectToScreen, false, ref objectToScreen);

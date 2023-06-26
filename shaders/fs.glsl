@@ -12,8 +12,12 @@ struct Light {
     vec3 specular;
     vec3 color;
 };
+struct Material {
+    vec3 shininess;
+};
 
 uniform Light light;
+uniform Material material;
 uniform vec3 cameraPosition;
 
 uniform sampler2D diffuseTexture;	// texture sampler
@@ -38,7 +42,7 @@ void main()
     //vec3 specColor = texture(diffuseTexture, uv).rgb;
     vec3 V = cameraPosition - positionWorld.xyz;
     vec3 R = reflect(-normalize(L), normalize(normalWorld).xyz);
-    float VdotR = pow(max(0, dot(normalize(V), normalize(R))), 20); //5.0 = shininess = n
+    float VdotR = pow(max(0, dot(normalize(V), normalize(R))), material.shininess.x); //shininess = n
     vec3 specular = light.specular * VdotR;
 
     vec3 result = (ambient + diffuse + specular);
