@@ -19,12 +19,12 @@ namespace INFOGR2023TemplateP2
             this.mesh = mesh;
         }
 
-        public void Render(Shader shader, Matrix4 worldToScreen, Matrix4 parentToWorld, Texture texture)
+        public void Render(Shader shader, Matrix4 worldToScreen, Matrix4 parentToWorld, Texture texture, Vector3 cameraPosition)
         {
             Matrix4 objectToWorld = objectToParent * parentToWorld;
             Matrix4 objectToScreen = objectToWorld * worldToScreen;
 
-            mesh.Render(shader, objectToScreen, objectToWorld, texture);
+            mesh.Render(shader, objectToScreen, objectToWorld, texture, cameraPosition);
             
         }
     }
@@ -36,11 +36,11 @@ namespace INFOGR2023TemplateP2
             children = new List<Node>();
         }
 
-        public void Render(Shader shader, Matrix4 worldToScreen, Matrix4 parentToWorld, Texture texture)
+        public void Render(Shader shader, Matrix4 worldToScreen, Matrix4 parentToWorld, Texture texture, Vector3 cameraPosition)
         {
             foreach (Node child in children)
             {
-                child.Render(shader, worldToScreen, child.objectToParent * parentToWorld, texture);
+                child.Render(shader, worldToScreen, child.objectToParent * parentToWorld, texture, cameraPosition);
             }
         }
     }

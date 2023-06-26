@@ -30,6 +30,7 @@ namespace INFOGR2023TemplateP2
             in_vertexPositionObject = GL.GetAttribLocation(programID, "vertexPositionObject");
             in_vertexNormalObject = GL.GetAttribLocation(programID, "vertexNormalObject");
             in_vertexUV = GL.GetAttribLocation(programID, "vertexUV");
+
             uniform_objectToScreen = GL.GetUniformLocation(programID, "objectToScreen");
             uniform_objectToWorld = GL.GetUniformLocation(programID, "objectToWorld");
         }

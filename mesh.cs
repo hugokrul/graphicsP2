@@ -54,7 +54,7 @@ namespace INFOGR2023TemplateP2
         }
 
         // render the mesh using the supplied shader and matrix
-        public void Render(Shader shader, Matrix4 objectToScreen, Matrix4 objectToWorld, Texture texture)
+        public void Render(Shader shader, Matrix4 objectToScreen, Matrix4 objectToWorld, Texture texture, Vector3 cameraPosition)
         {
             // on first run, prepare buffers
             Prepare();
@@ -69,6 +69,16 @@ namespace INFOGR2023TemplateP2
             GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);                               // make that the active texture unit
             GL.BindTexture(TextureTarget.Texture2D, texture.id);                                // bind the texture as a 2D image texture to the active texture unit
 
+            //camera
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "cameraPosition"), cameraPosition);
+
+            //Lights
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.position"), new Vector3(0, 5, 5));
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.color"), new Vector3(255, 255, 255));
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.ambient"), new Vector3(0.25f));
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.diffuse"), new Vector3(0.5f));
+            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.specular"), new Vector3(1.0f));
+
             // pass transforms to vertex shader
             GL.UniformMatrix4(shader.uniform_objectToScreen, false, ref objectToScreen);
             GL.UniformMatrix4(shader.uniform_objectToWorld, false, ref objectToWorld);
@@ -78,6 +88,7 @@ namespace INFOGR2023TemplateP2
             GL.EnableVertexAttribArray(shader.in_vertexNormalObject);
             GL.EnableVertexAttribArray(shader.in_vertexUV);
 
+           
             // bind vertex data
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferId);
 

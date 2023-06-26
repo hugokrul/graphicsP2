@@ -142,9 +142,9 @@ namespace INFOGR2023TemplateP2
                 // render scene to render target
                 if (shader != null && wood != null)
                 {
-                    human?.Render(shader, humanObjectToWorld * worldToCamera * cameraToScreen, humanObjectToWorld, wood);
-                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
-                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
+                    human?.Render(shader, humanObjectToWorld * worldToCamera * cameraToScreen, humanObjectToWorld, wood, cameraPosition);
+                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood, cameraPosition);
+                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood, cameraPosition);
 
                     // world = new SceneGraphs();
                     // Node? teapotNode = new Node(teapotObjectToWorld, teapot);
@@ -164,8 +164,8 @@ namespace INFOGR2023TemplateP2
                 // render scene directly to the screen
                 if (shader != null && wood != null)
                 {
-                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
-                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
+                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood, cameraPosition);
+                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood, cameraPosition);
                 }
             }
         }
