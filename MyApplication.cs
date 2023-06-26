@@ -8,7 +8,7 @@ namespace INFOGR2023TemplateP2
     {
         // member variables
         public Surface screen;                  // background surface for printing etc.
-        Mesh? teapot, floor;                    // meshes to draw using OpenGL
+        Mesh? teapot, floor, human;                    // meshes to draw using OpenGL
         float a = 0;                            // teapot rotation angle
         readonly Stopwatch timer = new();       // timer for measuring frame duration
         Shader? shader;                         // shader to use for rendering
@@ -19,18 +19,23 @@ namespace INFOGR2023TemplateP2
         readonly bool useRenderTarget = true;   // required for post processing
         SceneGraphs world;
         public KeyboardState keyboard;
-        Vector3 cameraPosition = new Vector3(0, 0, -10);
-        float viewAngle;
+        public Vector3 cameraPosition = new Vector3(0, 7, -10);
+        float viewAngleVert;
         Matrix4 rotateVertical;
         float speed = 0.3f;
-        
+
+        Vector3 cameraDirection, cameraUp, cameraRight;
 
         // constructor
         public MyApplication(Surface screen)
         {
             this.screen = screen;
-            viewAngle = 0;
-            rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), 0);
+            viewAngleVert = 0;
+            rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), 0);
+
+            cameraDirection = new Vector3(0, 0, 1);
+            cameraUp = new Vector3(0, 1, 0);
+            cameraRight = Vector3.Cross(cameraDirection, cameraUp);
         }
         // initialize
         public void Init()
@@ -38,6 +43,7 @@ namespace INFOGR2023TemplateP2
             // load teapot
             teapot = new Mesh("../../../assets/teapot.obj");
             floor = new Mesh("../../../assets/floor.obj");
+            human = new Mesh("../../../assets/FinalBaseMesh.obj");
             // initialize stopwatch
             timer.Reset();
             timer.Start();
@@ -59,19 +65,20 @@ namespace INFOGR2023TemplateP2
 
             if (keyboard.IsKeyDown(Keys.W))
             {
-                cameraPosition.Z += speed;
+                cameraPosition += new Vector3(cameraDirection.X, 0, cameraDirection.Z) * speed;
             }
             if (keyboard.IsKeyDown(Keys.S))
             {
-                cameraPosition.Z -= speed;
+                cameraPosition -= new Vector3(cameraDirection.X, 0, cameraDirection.Z) * speed;
             }
             if (keyboard.IsKeyDown(Keys.D))
             {
-                cameraPosition.X -= speed;
+                cameraPosition += new Vector3(cameraRight.X, 0, cameraRight.Z) * speed;
             }
             if (keyboard.IsKeyDown(Keys.A))
             {
-                cameraPosition.X += speed;
+                cameraPosition -= new Vector3(cameraRight.X, 0, cameraRight.Z) * speed;
+
             }
             if (keyboard.IsKeyDown(Keys.Space))
             {
@@ -83,15 +90,28 @@ namespace INFOGR2023TemplateP2
             }
             if (keyboard.IsKeyDown(Keys.Left))
             {
-                viewAngle -= speed * 0.1f;
-                rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), viewAngle);
+                viewAngleVert -= speed * 0.1f;
+                rotateCameraHorizontal(speed);
+                rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), viewAngleVert);
             }
             if (keyboard.IsKeyDown(Keys.Right))
             {
-                viewAngle += speed * 0.1f;
-                rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), viewAngle);
+                viewAngleVert += speed * 0.1f;
+                rotateCameraHorizontal(-speed);
+                rotateVertical = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), viewAngleVert);
             }
+        }
 
+        public void rotateCameraHorizontal(float rotateX)
+        {
+            // Calculate the rotation angle to rotate around.
+            // If you rotate horizontally, you always rotate around the Y axis.
+            Quaternion rotateHorizontal = new Quaternion(new Vector3(0, 1, 0) * 0.1f * rotateX);
+
+            // Rotate both the direction and the updirection around that angle.
+            cameraDirection = Vector3.Normalize(Vector3.Transform(cameraDirection, rotateHorizontal));
+            cameraUp = Vector3.Normalize(Vector3.Transform(cameraUp, rotateHorizontal));
+            cameraRight = Vector3.Cross(cameraDirection, cameraUp);
         }
 
         // tick for OpenGL rendering code
@@ -104,9 +124,9 @@ namespace INFOGR2023TemplateP2
 
             // prepare matrix for vertex shader
             float angle90degrees = 3;
-
-            Matrix4 teapotObjectToWorld = Matrix4.CreateScale(0.5f);
-            Matrix4 floorObjectToWorld = Matrix4.CreateScale(4.0f);
+            Matrix4 humanObjectToWorld = Matrix4.CreateScale(1f) * Matrix4.CreateTranslation(new Vector3(5, -8, -5));
+            Matrix4 teapotObjectToWorld = Matrix4.CreateScale(1f) * Matrix4.CreateTranslation(new Vector3(0, -8, 0));
+            Matrix4 floorObjectToWorld = Matrix4.CreateScale(4f);
             Matrix4 worldToCamera = Matrix4.CreateTranslation(cameraPosition) * rotateVertical;
             Matrix4 cameraToScreen = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60.0f), (float)screen.width/screen.height, .1f, 1000);
 
@@ -122,6 +142,7 @@ namespace INFOGR2023TemplateP2
                 // render scene to render target
                 if (shader != null && wood != null)
                 {
+                    human?.Render(shader, humanObjectToWorld * worldToCamera * cameraToScreen, humanObjectToWorld, wood);
                     teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood);
                     floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood);
 
