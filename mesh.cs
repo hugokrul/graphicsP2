@@ -16,6 +16,7 @@ namespace INFOGR2023TemplateP2
         int vertexBufferId;                     // vertex buffer object (VBO) for vertex data
         int triangleBufferId;                   // element buffer object (EBO) for triangle vertex indices
         int quadBufferId;                       // element buffer object (EBO) for quad vertex indices (not in Modern OpenGL)
+        public Light light;
 
         // constructor
         public Mesh(string filename)
@@ -73,12 +74,15 @@ namespace INFOGR2023TemplateP2
             GL.Uniform3(GL.GetUniformLocation(shader.programID, "cameraPosition"), cameraPosition);
 
             //Lights
-            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.position"), new Vector3(0, 5, 5));
-            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.color"), new Vector3(255, 255, 255));
-            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.ambient"), new Vector3(0.25f));
-            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.diffuse"), new Vector3(0.5f));
-            GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.specular"), new Vector3(1.0f));
-            GL.Uniform3(GL.GetUniformLocation(shader.programID, "material.shininess"), new Vector3(30f));
+            if (light != null)
+            {
+                GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.position"), light.position);
+                GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.color"), light.color);
+                GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.ambient"), light.ambient);
+                GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.diffuse"), light.diffuse);
+                GL.Uniform3(GL.GetUniformLocation(shader.programID, "light.specular"), light.specular);
+                GL.Uniform3(GL.GetUniformLocation(shader.programID, "material.shininess"), new Vector3(30f));
+            }
 
             // pass transforms to vertex shader
             GL.UniformMatrix4(shader.uniform_objectToScreen, false, ref objectToScreen);

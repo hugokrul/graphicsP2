@@ -123,15 +123,16 @@ namespace INFOGR2023TemplateP2
             timer.Start();
 
             // prepare matrix for vertex shader
-            float angle90degrees = 3;
-            Matrix4 humanObjectToWorld = Matrix4.CreateScale(1f) * Matrix4.CreateTranslation(new Vector3(5, -8, -5));
-            Matrix4 teapotObjectToWorld = Matrix4.CreateScale(1f) * Matrix4.CreateTranslation(new Vector3(0, -8, 0));
-            Matrix4 floorObjectToWorld = Matrix4.CreateScale(4f);
+            float angle90degrees = MathF.PI / 2;
+            Matrix4 humanObjectToParent = Matrix4.CreateScale(0.25f) * Matrix4.CreateTranslation(new Vector3(0, -2f, 0)) * Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a);
+            Matrix4 teapotObjectToHuman = Matrix4.CreateScale(0.25f) * Matrix4.CreateTranslation(new Vector3(1, 9f, 5)) * Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), -angle90degrees);
+            Matrix4 teapotObjectToTeapot = Matrix4.CreateScale(0.3f) * Matrix4.CreateTranslation(new Vector3(0, -4f, 0));
+            Matrix4 floorObjectToWorld = Matrix4.CreateScale(4f) ;
             Matrix4 worldToCamera = Matrix4.CreateTranslation(cameraPosition) * rotateVertical;
             Matrix4 cameraToScreen = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60.0f), (float)screen.width/screen.height, .1f, 1000);
 
             // update rotation
-            a += 0.001f * frameDuration;
+            a += 0.0005f * frameDuration;
             if (a > 2 * MathF.PI) a -= 2 * MathF.PI;
 
             if (useRenderTarget && target != null && quad != null)
@@ -142,16 +143,23 @@ namespace INFOGR2023TemplateP2
                 // render scene to render target
                 if (shader != null && wood != null)
                 {
-                    human?.Render(shader, humanObjectToWorld * worldToCamera * cameraToScreen, humanObjectToWorld, wood, cameraPosition);
-                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood, cameraPosition);
-                    floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood, cameraPosition);
+                    //human?.Render(shader, humanObjectToWorld * worldToCamera * cameraToScreen, humanObjectToWorld, wood, cameraPosition);
+                    //teapot?.Render(shader, teapotObjectToParent * worldToCamera * cameraToScreen, teapotObjectToParent, wood, cameraPosition);
+                    //floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood, cameraPosition);
 
-                    // world = new SceneGraphs();
-                    // Node? teapotNode = new Node(teapotObjectToWorld, teapot);
-                    // Node? floorNode = new Node(floorObjectToWorld, floor);
-                    // world.children.Add(teapotNode);
-                    // world.children.Add(floorNode);
-                    // world.Render(shader, worldToCamera * cameraToScreen, Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), 1), wood);
+                    world = new SceneGraphs();
+
+                    Node? humanNode = new Node(humanObjectToParent, human);
+                    Node? teapotNode = new Node(teapotObjectToHuman, teapot);
+                    Node? teapotToTeapotNode = new Node(teapotObjectToTeapot, teapot);
+                    Node? floorNode = new Node(floorObjectToWorld, floor);
+                    humanNode.children.Add(teapotNode);
+                    teapotNode.children.Add(teapotToTeapotNode);
+                    floorNode.children.Add(humanNode);
+
+                    
+                    world.children.Add(floorNode);
+                    world.Render(shader, worldToCamera, cameraToScreen, wood, cameraPosition);
                 }
 
                 // render quad
@@ -164,7 +172,7 @@ namespace INFOGR2023TemplateP2
                 // render scene directly to the screen
                 if (shader != null && wood != null)
                 {
-                    teapot?.Render(shader, teapotObjectToWorld * worldToCamera * cameraToScreen, teapotObjectToWorld, wood, cameraPosition);
+                    teapot?.Render(shader, teapotObjectToHuman * worldToCamera * cameraToScreen, teapotObjectToHuman, wood, cameraPosition);
                     floor?.Render(shader, floorObjectToWorld * worldToCamera * cameraToScreen, floorObjectToWorld, wood, cameraPosition);
                 }
             }

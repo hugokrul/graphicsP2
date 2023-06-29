@@ -39,7 +39,7 @@ namespace INFOGR2023TemplateP2
         public OpenTKApp()
             : base(GameWindowSettings.Default, new NativeWindowSettings()
             {
-                Size = new Vector2i(640, 360),
+                Size = new Vector2i(1280, 720),
                 Profile = allowPrehistoricOpenGL ? ContextProfile.Compatability : ContextProfile.Core,  // required for fixed-function, which is probably not supported on MacOS
                 Flags = (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? ContextFlags.Default : ContextFlags.Debug) // enable error reporting (not supported on MacOS)
                     | (allowPrehistoricOpenGL ? ContextFlags.Default : ContextFlags.ForwardCompatible), // required for MacOS
