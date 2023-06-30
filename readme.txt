@@ -17,7 +17,14 @@ Camera:
 
 Scene graph:
 - Your demo must show a hierarchy of objects. The scene graph must be able to hold any number of meshes, and may not put any restrictions on the maximum depth of the scene graph
-    =>  
+    =>  We started with a SceneGraph called world. That SceneGraph will be the parent of every Node. The SceneGraph has a list of nodes called children and if the Render Method is called,
+        it loops through all it's children and calling the render functions of those children. In the render function of the nodes, it checks if that node has any children,
+        if it does it calls that render method creating a recursive loop. It stops when the last node doesn't have any more children.
+
+        The position of the parent gets multiplied by the relative position of the child. That get's multiplied by the worldToCamera and that gets multiplied by cameraToScreen.
+        This way you have the relavitivePositionToScreen.
+
+        This way you only have to specify the relative position from the parent to the child so if the parent moves, the child moves too.
 
 Shaders:
 - You must provide at least one correct shader that implements the Phong shading model. This includes ambient light, diffuse reflection and glossy reflection of the point lights in the scene. To pass, you may use a single hardcoded light.
@@ -26,7 +33,8 @@ Shaders:
 Demonstration scene:
 - All engine functionality you implement must be visible in the demo. A high quality demo will increase your grade.
     =>  If you start the application, you can see the entire scene and move around using the controls.
-
+        You see a big guy rotating with the teapot in it's hand. the teapot has a little teapot beneath it. So the parent of the little teapot is the big teapot. The parent of the big teapot is the guy. The parent of the guy is the floor and the parent of the floor is the world.
+        You can also see we implemented the light here.
 
 Documentation:
 - Describe which features you implemented. Describe the controls for your demo.
