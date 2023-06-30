@@ -21,7 +21,12 @@ Scene graph:
 
 Shaders:
 - You must provide at least one correct shader that implements the Phong shading model. This includes ambient light, diffuse reflection and glossy reflection of the point lights in the scene. To pass, you may use a single hardcoded light.
-    =>  
+    =>  The shader imports the fragment shader and the vertex shader files and uses these to calculate the color of each coordinate.
+        This template was already implemented with the template project. We had to add the import of light and camera variables, like the light color and position.
+        These variables imported using the mesh script and are assigned in the SceneGraphs script for every mesh.
+        The variables are used to calculate the ambient, the diffusion and the specular lighting aspects of each object.
+        The shader does not support multiple lights. However, it supports the one light fully.
+        The shader does not support reflection.
 
 Demonstration scene:
 - All engine functionality you implement must be visible in the demo. A high quality demo will increase your grade.
